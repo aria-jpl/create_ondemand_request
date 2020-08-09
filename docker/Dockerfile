@@ -1,4 +1,5 @@
-FROM hysds/pge-gdal:latest
+FROM hysds/pge-base:latest
+#FROM hysds/pge-gdal:latest
 #FROM hysds/pge-base:develop-es1
 
 MAINTAINER HYSDS "hysds@jpl.nasa.gov"
