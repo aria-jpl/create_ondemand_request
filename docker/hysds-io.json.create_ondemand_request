@@ -5,6 +5,11 @@
   "allowed_accounts": [ "ops" ],  
   "params" : [
     {
+      "name": "name",
+      "from": "submitter",
+      "type": "text"
+    },
+    {
       "name": "enumeration_list",
       "from": "submitter",
       "type": "text"

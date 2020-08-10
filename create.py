@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 
-'''
-Simple AOI generation script
-'''
-
 import os
 import re
 import ast
@@ -32,25 +28,40 @@ def main():
     return ds, met
 
 def build_ds(context, ds):
-    '''generates the aoi dataset json from the context inputs'''
-    aoi_type = validate_type(context['type'])
-    label = generate_label(context['name'], aoi_type)
-    project = context['account']
+    '''generates on-demand request dataset json from the context inputs'''
+    name = context['name']
+    #aoi_type = validate_type(context['type'])
+    #label = generate_label(context['name'], aoi_type)
+    #project = context['account']
+    #enumeration_list = validate_enumeration_list(context['enumeration_list'])
+    enumeration_list = context['enumeration_list']
     polygon_geojson = validate_geojson(context['geojson_polygon'])
-    starttime = validate_time(context['starttime'])
-    endtime = validate_time(context['endtime'])
-    if 'emails' in context.keys():
-        email_list = ds['emails']
-        additional_emails = parse_emails(context['emails'])
-        email_list = list(set(email_list + additional_emails))
+    #starttime = validate_time(context['starttime'])
+    #endtime = validate_time(context['endtime'])
+    #if 'emails' in context.keys():
+    #    email_list = ds['emails']
+    #    additional_emails = parse_emails(context['emails'])
+    #    email_list = list(set(email_list + additional_emails))
+    group_id = context['group_id']
+    program_pi_id = context['program_pi_id']
+
+    # from spec doc: request-s1gunw-<start time>-<end time>-<aoi name>-<username>-<timestamp of request>
+    timeStampString = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+    #print(timeStampString)
+    #print(str(datetime.now()))
+    label = "{}-{}-{}".format(name, group_id, timeStampString)
+
     #save to ds object
     ds['label'] = label
-    ds['type'] = aoi_type
-    ds['account'] = project
-    ds['location'] = polygon_geojson
-    ds['starttime'] = starttime
-    ds['endtime'] = endtime
-    ds['emails'] = email_list
+    #ds['type'] = aoi_type
+    #ds['account'] = project
+    ds['enumeration_list'] = enumeration_list
+    ds['polygon_geojson'] = polygon_geojson
+    #ds['starttime'] = starttime
+    #ds['endtime'] = endtime
+    #ds['emails'] = email_list
+    ds['group_id'] = group_id
+    ds['program_pi_id'] = program_pi_id
     return ds
 
 def build_met(context, met):
@@ -185,7 +196,9 @@ def save_files(ds, met):
     if not os.path.exists(label):
         os.mkdir(label)
     ds_path = os.path.join(label, '{0}.dataset.json'.format(label))
+    #print(ds_path)
     met_path = os.path.join(label, '{0}.met.json'.format(label))
+    #print(met_path)
     #stick label from event_metadata in the field if it exists
     try:
         ds['label'] = met['event_metadata']['label']
